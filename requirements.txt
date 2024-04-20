@@ -1,0 +1,27 @@
+tensorflow>=2.5.0*
+#Machine learning library for numerical computation using data flow graphs; widely used for deep learning applications.
+keras==2.4.3
+# High-level neural networks API, capable of running on top of TensorFlow, used for building and training deep learning models.
+imutils==0.5.4
+#Series of convenience functions to make basic image processing functions such as translation, rotation, resizing, skeletonization, and displaying Matplotlib images easier with OpenCV.
+numpy==1.19.5
+# Fundamental package for scientific computing with Python; adds support for large, multi-dimensional arrays and matrices, along with a large collection of high-level mathematical functions to operate on these arrays.
+opencv-python>=4.2.0.32
+#Python bindings for OpenCV; used for computer vision and image processing tasks.
+matplotlib==3.4.1
+# 2D plotting library which produces publication-quality figures in a variety of hardcopy formats and interactive environments across platforms.
+argparse==1.4.0
+# Provides easy-to-write user-friendly command-line interfaces; the program defines what arguments it requires, and argparse will figure out how to parse those out of sys.argv.
+scipy==1.6.2
+#Library used for scientific and technical computing, including functions for optimization, integration, interpolation, eigenvalue problems, algebraic equations, differential equations, and others.
+
+scikit-learn==0.24.1
+#Library for machine learning in Python that includes various classification, regression, and clustering algorithms.
+pillow>=8.3.2
+#The Python Imaging Library adds image processing capabilities to your Python interpreter; used for opening, manipulating, and saving many different image file formats.
+streamlit==0.79.0
+#Open-source app framework for Machine Learning and Data Science projects, to turn data scripts into shareable web apps in minutes.
+onnx==1.10.1
+#Open Neural Network Exchange format, which provides an open source format for AI models, both deep learning and traditional ML.
+tf2onnx==1.9.3
+#Tool/support library for converting TensorFlow models to the ONNX format, which can then be used to execute models on different platforms and devices.
