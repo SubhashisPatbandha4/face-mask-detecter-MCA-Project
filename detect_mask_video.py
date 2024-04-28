@@ -122,8 +122,11 @@ without_mask_dir = "./results/without_mask/"
 os.makedirs(with_mask_dir, exist_ok=True)
 os.makedirs(without_mask_dir, exist_ok=True)
 
+last_alert_time = 0  # Store the last time the no mask alert was played
+alert_interval = 5  # Interval in seconds to wait before repeating the sound
 
-
+last_mask_alert_time = 0  # Store the last time the mask alert was played
+mask_alert_interval = 5  # Interval in seconds to wait before repeating the sound
 # loop over the frames from the video stream
 while True:
 	# grab the frame from the threaded video stream and resize it
@@ -134,7 +137,10 @@ while True:
 	# detect faces in the frame and determine if they are wearing a
 	# face mask or not
 	(locs, preds) = detect_and_predict_mask(frame, faceNet, maskNet)
-
+	current_time = time.time()
+	any_face_detected = False
+	any_no_mask_detected = False
+	any_mask_detected = False
 	# loop over the detected face locations and their corresponding
 	# locations
 	for (box, pred) in zip(locs, preds):
@@ -161,17 +167,33 @@ while True:
 		frame = cv2.resize(frame, (screen_width, screen_height))
 		# print(label)
 		if label.find("No Mask") != -1:
-			cv2.imwrite(os.path.join(without_mask_dir, "frame_{}.jpg".format(frame_num)), frame)
+			any_face_detected = True
+			any_no_mask_detected = True
+			if current_time - last_alert_time >= alert_interval:
+			# cv2.imwrite(os.path.join(without_mask_dir, "frame_{}.jpg".format(frame_num)), frame)
 			# playsound("audio/no_mask.wav")
-			accepted_sound = pygame.mixer.Sound("audio/no_mask.wav")  # Path to your sound file
+				nomask_sound = pygame.mixer.Sound("audio/no_mask.wav")  # Path to your sound file
 			# Play the sound
-			# accepted_sound.play()
-		
+				# nomask_sound.play()
+				last_alert_time = current_time  # Update the last alert time
+    
 		elif label.find("Mask") != -1:
+			any_face_detected = True
+			any_mask_detected = True
+			if current_time - last_mask_alert_time >= mask_alert_interval:
       		# Play accepted sound if mask is detected
-			
-			cv2.imwrite(os.path.join(with_mask_dir, "frame_{}.jpg".format(frame_num)), frame)
-      
+				accepted_sound=pygame.mixer.Sound("audio/accepted.wav")# Path to your sound file
+				# Play the sound
+				accepted_sound.play()
+				last_mask_alert_time = current_time  # Update the last mask alert time
+			# cv2.imwrite(os.path.join(with_mask_dir, "frame_{}.jpg".format(frame_num)), frame)
+   
+    # If no unmasked faces are detected, reset the timer
+	if not any_no_mask_detected:
+		last_alert_time = current_time - alert_interval  # Allow immediate alert if no mask is detected next time
+	if not any_mask_detected:
+		last_mask_alert_time = current_time - mask_alert_interval  # Allow immediate alert if mask is detected next time
+  
 	# show the output frame
 	cv2.imshow("Frame", frame)
 	key = cv2.waitKey(3) & 0xFF
