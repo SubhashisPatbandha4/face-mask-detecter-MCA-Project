@@ -1,30 +1,36 @@
 import tkinter as tk
-from tkinter import messagebox, filedialog
+from tkinter import ttk, messagebox, filedialog
 import os
+import sys
+import subprocess
 
 class GUI:
     def __init__(self, root):
         self.root = root
         self.root.title("Face Mask Recognition")
+        self.root.attributes("-fullscreen", True)  # Make window full-screen
 
         # Load background image
-        # self.bg_image = tk.PhotoImage(file=r"C:\Users\subha\OneDrive\Desktop\node-js-g76f85c45d_1280.png")
         self.bg_image = tk.PhotoImage(file="homepagepic.png")
         self.background_label = tk.Label(root, image=self.bg_image)
-        self.background_label.grid(row=0, column=1, rowspan=3, sticky="nsew")
+        self.background_label.place(relwidth=1, relheight=1)  # Use place() instead of grid() for full-screen background
+
+        # Configure style for all buttons
+        style = ttk.Style()
+        style.configure("TButton", font=('Helvetica', 12, 'bold'), foreground="black", background="#d1d1d1")
+        style.map("TButton", foreground=[('active', 'black')], background=[('active', '#cfcfcf')])
 
         # Buttons
-        self.detect_button = tk.Button(root, text="Detect Mask", command=self.detect_mask)
-        self.detect_button.grid(row=0, column=0, padx=20, pady=10, sticky="w")
+        buttons = [
+            ("Detect Mask", self.detect_mask, 0.1, 0.1),
+            ("Login", self.open_password_window, 0.1, 0.3),
+            # ("Open Terminal", self.open_terminal, 0.1, 0.5),
+            ("Exit", self.confirm_exit, 0.1, 0.5)
+        ]
 
-        self.open_password_button = tk.Button(root, text="login", command=self.open_password_window)
-        self.open_password_button.grid(row=1, column=0, padx=20, pady=10, sticky="w")
-
-        self.exit_button = tk.Button(root, text="Exit", command=self.confirm_exit)
-        self.exit_button.grid(row=2, column=0, padx=20, pady=10, sticky="w")
-        
-        # self.detect_button = tk.Button(root, text="View Database", command=self.view_database)
-        # self.detect_button.grid(row=0, column=0, padx=20, pady=10, sticky="w")
+        for text, command, relx, rely in buttons:
+            button = ttk.Button(root, text=text, command=command, style="TButton")
+            button.place(relx=relx, rely=rely, relwidth=0.3, relheight=0.1)
 
         # Configure grid weights
         root.grid_rowconfigure(0, weight=1)
@@ -35,36 +41,54 @@ class GUI:
 
         # Make window resizable
         root.resizable(True, True)
+    # def open_terminal(self):
+    #     # Adjust the below command according to your specific Python environment activation script
+    #     terminal_command = "cmd.exe /k cd D:\\Web Development\\Face_mask_detection-master\\matching_face & activate"
+    #     subprocess.Popen(terminal_command, shell=True)
 
     def detect_mask(self):
-            os.system("python detect_mask_video.py ")
+        os.system("python detect_mask_video.py ")
 
     def open_password_window(self):
         # Create a new window for password entry
-        self.password_window = tk.Toplevel(self.root)
-        self.password_window.title("Enter Password")
+        password_window = tk.Toplevel(self.root)
+        password_window.title("Enter Password")
+
+        # Set custom theme
+        password_window.style = ttk.Style()
+        password_window.style.theme_use("clam")  # Choose a theme (e.g., "clam")
 
         # Add password entry widget
-        self.password_label = tk.Label(self.password_window, text="Enter Password:")
-        self.password_label.pack(pady=10)
-        self.password_entry = tk.Entry(self.password_window, show="*")
-        self.password_entry.pack(pady=10)
-        self.submit_button = tk.Button(self.password_window, text="Submit", command=self.check_password)
-        self.submit_button.pack(pady=10)
+        password_label = ttk.Label(password_window, text="Enter Password:")
+        password_label.pack(pady=10)
+        password_entry = ttk.Entry(password_window, show="*")
+        password_entry.pack(pady=10)
+        submit_button = ttk.Button(password_window, text="Submit", command=lambda: self.check_password(password_entry))
+        submit_button.pack(pady=10)
 
-    def check_password(self):
+        # Position window on the same screen
+        password_window.geometry("+{}+{}".format(self.root.winfo_x(), self.root.winfo_y()))
+
+    def check_password(self, password_entry):
         # Check if password is correct
-        password = self.password_entry.get()
-        if password == "":
+        password = password_entry.get()
+        if password == "1":
             self.open_feature_window()
-            self.password_window.destroy()
+            password_entry.master.destroy()
         else:
             messagebox.showerror("Error", "Incorrect password. Please try again.")
 
     def open_feature_window(self):
         # Create a new window for feature selection
-        self.feature_window = tk.Toplevel(self.root)
-        self.feature_window.title("Feature Selection")
+        feature_window = tk.Toplevel(self.root)
+        feature_window.title("Feature Selection")
+
+        # Set custom theme
+        feature_window.style = ttk.Style()
+        feature_window.style.theme_use("clam")  # Choose a theme (e.g., "clam")
+
+        # Position window on the same screen
+        feature_window.geometry("+{}+{}".format(self.root.winfo_x(), self.root.winfo_y()))
 
         # Create buttons
         features = [
@@ -76,36 +100,30 @@ class GUI:
             "Delete Database",
             "Add Student Database",
             "Send Mail to Defaulter"
-            ]
+        ]
         commands = [
-            "python .\matching_face\\view_database.py",
-            "python .\matching_face\image_similarity_mtcnn.py",
-            "python .\matching_face\\view_database_one.py",
-            "python .\matching_face\change_defaultmask_value",
-            "python .\matching_face\defaulter_check.py",
-            "python .\matching_face\delete_database.py",
-            "python .\matching_face\\add_student_database.py",
-            "python .\matching_face\send_mail_to_defaulter.py"
-            ]
-
-        # for feature in features:
+            "view_database.py",
+            "image_similarity_mtcnn.py",
+            "view_database_one.py",
+            "change_defaultmask_value.py",
+            "defaulter_check.py",
+            "delete_database.py",
+            "add_student_database.py",
+            "send_mail_to_defaulter.py"
+        ]
+        
         for feature, command in zip(features, commands):
-            cmd = lambda c=command: os.system(c)
-            button = tk.Button(self.feature_window, text=feature, command=cmd)
+            cmd = lambda c=command: subprocess.Popen([sys.executable, os.path.join("D:/Web Development/Face_mask_detection-master", c)])
+            button = tk.Button(feature_window, text=feature, command=cmd)
             button.pack(fill="x", padx=20, pady=10)
-    def run_feature(self, feature):
-        # Run external Python file based on selected feature
-        os.system("python {}.py".format(feature.lower().replace(" ", "_")))
 
     def confirm_exit(self):
         # Prompt a message box to confirm exit
         if messagebox.askokcancel("Exit", "Are you sure you want to exit?"):
             self.root.destroy()
-            
-            
-            
+
     def view_database(self):
-        os.system("python .\matching_face\delete_database.py")
+        os.system(r"python .\matching_face\view_database.py")
 
 if __name__ == "__main__":
     root = tk.Tk()
