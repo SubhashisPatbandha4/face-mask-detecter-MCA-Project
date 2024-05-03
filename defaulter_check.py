@@ -8,7 +8,7 @@ import torch
 from PIL import ImageEnhance
 from PIL import Image
 import json
-
+import shutil
 # Initialize MTCNN for face detection and alignment
 mtcnn = MTCNN(keep_all=True)
 
@@ -171,6 +171,24 @@ def main(threshold=0.6):
     # Print matched images and match accuracy
     for student_id, match_count in match_counts.items():
         print(f"Student ID {student_id}: {match_count} image(s) matched")
+        # Path to the folder where you want to move the images
+    proof_dump_path = r"D:\Web Development\Face_mask_detection-master\proof_dump"
+
+    # Create the proof_dump folder if it doesn't exist
+    os.makedirs(proof_dump_path, exist_ok=True)
+
+    # Move all files from default_no_mask_images_path to proof_dump_path
+    for filename, img in load_images_from_folder(default_no_mask_images_path):
+        shutil.move(os.path.join(default_no_mask_images_path, filename), os.path.join(proof_dump_path, filename))
+
+    # Empty the default_no_mask_images_path folder
+    for filename in os.listdir(default_no_mask_images_path):
+        file_path = os.path.join(default_no_mask_images_path, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.remove(file_path)
+        except Exception as e:
+            print(f"Failed to delete {file_path}: {e}")
 
 if __name__ == "__main__":
     main()

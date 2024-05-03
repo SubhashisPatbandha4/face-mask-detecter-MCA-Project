@@ -3,18 +3,18 @@
         "name": "subhashis",
         "email": "subhashispatbandha2001@gmail.com",
         "image_path": "student_images/1_subhashis.jpeg",
-        "default_mask": 22
+        "default_mask": 24
     },
     "2": {
         "name": "sameer",
         "email": "sameerkumarchoudhury@gmail.com",
         "image_path": "student_images/2_sameer.jpg",
-        "default_mask": 2
+        "default_mask": 4
     },
     "3": {
         "name": "tushar",
         "email": "tusharkantabihari4474@gmail.com",
         "image_path": "student_images/3_tushar.jpg",
-        "default_mask": 2
+        "default_mask": 4
     }
 }
